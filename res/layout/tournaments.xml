@@ -9,13 +9,9 @@
         android:layout_weight="1"
         android:layout_height="fill_parent">
         <TextView
-            android:id="@+id/name"
-            android:gravity="left"
+            android:id="@+id/tournament"
+            android:layout_height="fill_parent"
             android:layout_width="fill_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:singleLine="true"
-           	android:ellipsize="end"
         />
     </LinearLayout>
 </LinearLayout>

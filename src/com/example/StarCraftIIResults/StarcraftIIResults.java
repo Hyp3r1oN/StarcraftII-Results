@@ -1,18 +1,20 @@
 package com.example.StarCraftIIResults;
 
 import java.util.ArrayList;
-
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
-
 
 
 public class StarcraftIIResults extends ListActivity {
@@ -27,18 +29,34 @@ public class StarcraftIIResults extends ListActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	Log.v("ONCREATE", "start");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-     /*   m_Players = new ArrayList<Player>();
-        this.m_adapter = new PlayerAdapter(this, R.layout.row, m_Players);
-        setListAdapter(this.m_adapter);	*/
+        
+        // Now hook into our object and set its onItemClickListener member
+        // to our class handler object.
+       // ListView tournaments = (ListView)findViewById(R.id.tournament);
+       // tournaments.setOnItemClickListener(tournamentsClick); 
+        
         
         m_Tournaments = new ArrayList<Tournament>();
-        this.tAdapter = new TournamentAdapter(this, R.layout.row, m_Tournaments);
+        this.tAdapter = new TournamentAdapter(this, R.layout.tournaments, m_Tournaments);
         setListAdapter(this.tAdapter);
         
+        
+        ListView lv = getListView();
+        lv.setTextFilterEnabled(true);
+
+        lv.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                int position, long id) {
+              // When clicked, show a toast with the TextView text
+                Intent intent = new Intent(StarcraftIIResults.this, Groups.class);
+                startActivity(intent);
+
+            }
+          });
+
         viewTournaments = new Runnable(){
         	public void run() {
         		getInfos();	
@@ -49,7 +67,7 @@ public class StarcraftIIResults extends ListActivity {
         m_ProgressDialog = ProgressDialog.show(StarcraftIIResults.this,    
               "Please wait...", "Retrieving data ...", true);
     }
-
+    
     private Runnable returnRes = new Runnable() {
     	public void run() {
             if(m_Tournaments != null && m_Tournaments.size() > 0) {
@@ -57,7 +75,6 @@ public class StarcraftIIResults extends ListActivity {
                 for(int i = 0; i < m_Tournaments.size(); i++) {
                 	tAdapter.add(m_Tournaments.get(i));
                 }
-    			Log.i("RETURNRES", "TSIZE: " + m_Tournaments.size());
             }
             m_ProgressDialog.dismiss();
             tAdapter.notifyDataSetChanged();
@@ -79,13 +96,13 @@ public class StarcraftIIResults extends ListActivity {
 	        View v = convertView;
 	        if (v == null) {
 	            LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	            v = vi.inflate(R.layout.row, null);
+	            v = vi.inflate(R.layout.tournaments, null);
 	        }
 	        Tournament t = items.get(position);
 	        if (t != null) {
-	        	TextView tName = (TextView) v.findViewById(R.id.name);
+	        	TextView tName = (TextView) v.findViewById(R.id.tournament);
 	        	if (tName != null) 
-	        		tName.setText("Name: "+ t.getName());
+	        		tName.setText(t.getName());
 	        }
 	        return v;
     	}
@@ -93,17 +110,15 @@ public class StarcraftIIResults extends ListActivity {
     
     private void getInfos(){
         try{
-        	TLParser parser = new TLParser();
             m_Tournaments = new ArrayList<Tournament>();
-            String tName;
-            
             Tournament t = new Tournament();
-         	tName = parser.tName();
-        	t.setName(tName);
+        	t.setName(TLParser.getInstance().getTournaments());
+        	Log.d("getinfos", "omfg");
         	m_Tournaments.add(t);
-        	Thread.sleep(1000);
+        //	Thread.sleep(1000);
           } catch (Exception e) {
             Log.e("GETINFOS_PROC", e.getMessage());
+            e.printStackTrace();
           }
           runOnUiThread(returnRes);
       }

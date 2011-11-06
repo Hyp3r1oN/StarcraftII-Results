@@ -2,19 +2,44 @@ package com.example.StarCraftIIResults;
 
 public class Player {
 
-    private String name;
-    private String score;
+	private String Name;
+	private String Race;
+	private Integer Icon;
+	
+	/**
+	 * @return the race
+	 */
+	public String getRace() {
+		return Race;
+	}
+	/**
+	 * @param race the race to set
+	 */
+	public void setRace(String race) {
+		Race = race;
+	}
+	/**
+	 * @return the name
+	 */
 	public String getName() {
-		return name;
+		return Name;
 	}
+	/**
+	 * @param name the name to set
+	 */
 	public void setName(String name) {
-		this.name = name;
+		Name = name;
 	}
-	public String getScore() {
-		return score;
+	/**
+	 * @return the icon
+	 */
+	public Integer getIcon() {
+		return Icon;
 	}
-	public void setScore(String score) {
-		this.score = score;
+	/**
+	 * @param icon the icon to set
+	 */
+	public void setIcon(Integer icon) {
+		Icon = icon;
 	}
-    
 }
