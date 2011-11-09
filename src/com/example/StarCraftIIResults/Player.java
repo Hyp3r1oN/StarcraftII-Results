@@ -1,45 +1,52 @@
+/**
+ * 
+ */
 package com.example.StarCraftIIResults;
 
+/**
+ * @author	Antoine Mineau
+ * @mail	antoine.mineau@gmail.com
+ */
 public class Player {
 
-	private String Name;
-	private String Race;
-	private Integer Icon;
+	private int icon;
+	private String name;
+	private String race;
 	
+	/**
+	 * @return the icon
+	 */
+	public int getIcon() {
+		return icon;
+	}
+	/**
+	 * @param icon the icon to set
+	 */
+	public void setIcon(int icon) {
+		this.icon = icon;
+	}
 	/**
 	 * @return the race
 	 */
 	public String getRace() {
-		return Race;
+		return race;
 	}
 	/**
 	 * @param race the race to set
 	 */
 	public void setRace(String race) {
-		Race = race;
+		this.race = race;
 	}
 	/**
 	 * @return the name
 	 */
 	public String getName() {
-		return Name;
+		return name;
 	}
 	/**
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
-		Name = name;
-	}
-	/**
-	 * @return the icon
-	 */
-	public Integer getIcon() {
-		return Icon;
-	}
-	/**
-	 * @param icon the icon to set
-	 */
-	public void setIcon(Integer icon) {
-		Icon = icon;
+		this.name = name;
 	}
 }

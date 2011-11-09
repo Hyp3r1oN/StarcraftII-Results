@@ -20,9 +20,7 @@ import android.widget.TextView;
 public class StarcraftIIResults extends ListActivity {
 	
     private ProgressDialog m_ProgressDialog = null;
-  //  private ArrayList<Player> m_Players = null;
     private ArrayList<Tournament> m_Tournaments = null;
-    //private PlayerAdapter m_adapter;
     private TournamentAdapter tAdapter;
     private Runnable viewTournaments;
     
@@ -31,14 +29,7 @@ public class StarcraftIIResults extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        
-        // Now hook into our object and set its onItemClickListener member
-        // to our class handler object.
-       // ListView tournaments = (ListView)findViewById(R.id.tournament);
-       // tournaments.setOnItemClickListener(tournamentsClick); 
-        
-        
+  
         m_Tournaments = new ArrayList<Tournament>();
         this.tAdapter = new TournamentAdapter(this, R.layout.tournaments, m_Tournaments);
         setListAdapter(this.tAdapter);
@@ -51,7 +42,7 @@ public class StarcraftIIResults extends ListActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                 int position, long id) {
               // When clicked, show a toast with the TextView text
-                Intent intent = new Intent(StarcraftIIResults.this, Groups.class);
+                Intent intent = new Intent(StarcraftIIResults.this, Tabs.class);
                 startActivity(intent);
 
             }
@@ -65,7 +56,7 @@ public class StarcraftIIResults extends ListActivity {
         Thread thread =  new Thread(null, viewTournaments, "MagentoBackground");
         thread.start();
         m_ProgressDialog = ProgressDialog.show(StarcraftIIResults.this,    
-              "Please wait...", "Retrieving data ...", true);
+             "Please wait...", "Retrieving data ...", true);
     }
     
     private Runnable returnRes = new Runnable() {
@@ -112,10 +103,10 @@ public class StarcraftIIResults extends ListActivity {
         try{
             m_Tournaments = new ArrayList<Tournament>();
             Tournament t = new Tournament();
-        	t.setName(TLParser.getInstance().getTournaments());
-        	Log.d("getinfos", "omfg");
+     //   	t.setName(TLParser.getInstance().getTournaments());
+            t.setName("TOURNAMENT");
         	m_Tournaments.add(t);
-        //	Thread.sleep(1000);
+        	Thread.sleep(1000);
           } catch (Exception e) {
             Log.e("GETINFOS_PROC", e.getMessage());
             e.printStackTrace();

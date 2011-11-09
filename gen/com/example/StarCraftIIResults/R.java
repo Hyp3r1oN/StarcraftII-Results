@@ -17,15 +17,18 @@ public final class R {
         public static final int zicon=0x7f020003;
     }
     public static final class id {
-        public static final int lvPlayers=0x7f050000;
-        public static final int player=0x7f050001;
-        public static final int tournament=0x7f050002;
+        public static final int group=0x7f050001;
+        public static final int groups=0x7f050004;
+        public static final int llgroups=0x7f050000;
+        public static final int player=0x7f050002;
+        public static final int tabs=0x7f050003;
+        public static final int tournament=0x7f050005;
     }
     public static final class layout {
         public static final int groups=0x7f030000;
         public static final int main=0x7f030001;
         public static final int players=0x7f030002;
-        public static final int players_design=0x7f030003;
+        public static final int tabs=0x7f030003;
         public static final int tournaments=0x7f030004;
     }
     public static final class string {

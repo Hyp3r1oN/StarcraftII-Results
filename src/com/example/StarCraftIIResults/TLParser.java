@@ -14,11 +14,9 @@ import org.jsoup.select.Elements;
 import android.util.Log;
 
 public class TLParser {
-	public String url;
-	public String title;
+	public String title, url;
 	public Document html;
-	public Elements groupsHTML;
-	public Elements playersHTML;
+	public Elements groupsHTML, playersHTML, roundsHTML;
 	private static volatile TLParser instance = null;
 
 	// init Parser
@@ -27,7 +25,9 @@ public class TLParser {
 		Log.d("init parser", "init parser");
 		try {
 			html = Jsoup.connect(url).get();
-			groupsHTML = html.getElementsByAttributeValue("style", "width: 300px;margin: 0px;");	
+			roundsHTML = html.getElementsByTag("h2").select("span");
+			groupsHTML = html.getElementsByAttributeValueMatching("class", "prettytable|mw-headline");
+			Log.d("init parser", "GOT ALL VALUES");
 		} catch (IOException e) {
             Log.e("GETINFOS_PROC", e.getMessage());
 			e.printStackTrace();
@@ -52,35 +52,97 @@ public class TLParser {
 		return title[0];
 	}
 	
-	// get Tournament Groups
-	public List<String> getGroups() {
-		List<String> groups = new ArrayList<String>();
-		// get only groups table
-		for (Element e : groupsHTML) {			
-			Element hasResult = e.select("tr").get(1);
-			// check if the table has results
-			if (hasResult.hasAttr("style")) {
-				groups.add(e.select("tr").first().text());
-			}	
+	/**
+	 * @return a Rounds List<String>
+	 */
+	public List<String> getRounds() {
+		List<String> rounds = new ArrayList<String>();
+		boolean add = false;
+		for (Element e : roundsHTML) {
+			String title = e.text();
+			if (title.compareToIgnoreCase("match summary playoffs") == 0)
+				add = false;
+			if (add == true) {
+				if (title.lastIndexOf("(") != -1 && title.lastIndexOf(")") != -1) {
+					rounds.add(title.substring(title.lastIndexOf("(") + 1, title.lastIndexOf(")")));
+				} else 
+				rounds.add(title);
+			}
+			if (title.compareToIgnoreCase("format") == 0)
+				add = true;
 		}
-		return revert(groups);
+		return rounds;
 	}
 	
-	public List<Player> getPlayers(int group) {
+	/**
+	 * @return a Groups List<String>
+	 */
+	public List<String> getGroups(String ro) {
+		List<String> groups = new ArrayList<String>();
+		List<String> groupsDone = new ArrayList<String>();
+		boolean show = false;
+		// get only groups table
+		Log.d("getgroups", "beginning");
+		for (Element e : groupsHTML) {
+			String title = e.text();
+			// break when we get all groups of a specific round
+			if (e.tagName().compareTo("span") == 0 && show == true && e.attr("id").matches("(?i).*group_stage.*"))
+				break;
+			// check if title matches with ro
+			if (title.matches("(?i).*" + ro + ".*"))
+				show = true;
+			// get groups
+			if (show == true) {
+				Elements tables = e.getElementsByAttributeValue("style", "width: 300px;margin: 0px;");
+				for (Element x : tables) {
+					// if there is result, add in groupsDone List
+					if (x.select("tr").get(1).hasAttr("style"))
+						groupsDone.add(x.select("tr").first().text());
+					else
+						groups.add(x.select("tr").first().text());
+				}
+			}
+		}
+		Log.d("getgroups", "end");
+		for (int x = 0; x != groupsDone.size(); x++) {
+			groups.add(0, groupsDone.get(x));
+		}
+		Log.d("getgroups", "return");
+		return groups;
+	}
+	
+	public List<Player> getPlayers(String round, String group) {
 		List<Player> players = new ArrayList<Player>();
-		Elements playersHTML = groupsHTML.get(group).select("tr[style]");
 		Hashtable<String, Integer> icons = new Hashtable<String, Integer>();
+		boolean add = true;
 		
 		icons.put("Protoss", R.drawable.picon);
 		icons.put("Terran", R.drawable.ticon);
 		icons.put("Zerg", R.drawable.zicon);
-		for (Element e: playersHTML) {
-			Player x = new Player();
-			x.setName(e.text());
-			x.setRace(e.select("a").get(1).attr("title"));
-			x.setIcon(icons.get(x.getRace()));
-			players.add(x);
-		}	
+		for (Element e: groupsHTML) {
+			String title = e.text();
+			if (add == true) {
+				if (e.select("tr").size() >= 1) {
+					String groupName = e.select("tr").first().text();
+					if (groupName.compareToIgnoreCase(group) == 0) {
+						for (int i = 0; i != e.select("tr").size(); i++) {
+							Element x = e.select("tr").get(i);
+							if (i > 0) {
+								Player p = new Player();
+								p.setName(x.text());
+								p.setRace(x.select("a").get(1).attr("title"));
+								p.setIcon(icons.get(p.getRace()));
+								players.add(p);
+							}
+						}
+						break;
+					}
+				}
+				
+			}
+			if (title.matches("(?i).*"+round+".*"))
+				add = true;
+		}
 		return players;
 	}
 	
