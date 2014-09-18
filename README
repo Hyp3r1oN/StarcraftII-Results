@@ -1,6 +1,5 @@
+This project is abandoned.
+
 The goal is to create an android app to retrieve the last results of Starcraft II Tournaments (GSL focus atm) !
 
 At the moment, i parse liquipedia to retrive the informations using jsoup (http://jsoup.org)
-
-
-PS : I'm a newbie and still learning :)
